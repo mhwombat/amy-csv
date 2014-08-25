@@ -1,0 +1,45 @@
+name:                amy-csv
+version:             1.5
+synopsis:            Agent for categorising images.
+description:         Experiment in analysing Galaxy Zoo data.
+homepage:            https://github.com/mhwombat/realtra
+license:             BSD3
+license-file:        LICENSE
+author:              Amy de Buitléir
+maintainer:          amy@nualeargais.ie
+copyright:           (c) Amy de Buitléir 2013
+category:            Data
+build-type:          Simple
+cabal-version:       >=1.8
+
+source-repository head
+  type:     git
+  location: https://github.com/mhwombat/amy-csv.git
+
+source-repository this
+  type:     git
+  location: https://github.com/mhwombat/amy-csv.git
+  tag:      1.5
+
+Executable csv-stats
+  Main-Is:          Data/CSV/BatchAverage.hs
+  GHC-Options:      -Wall -rtsopts
+  Hs-source-dirs:   src
+  build-depends:    base ==4.*,
+                    factory ==0.2.*,
+                    split ==0.2.*
+
+Executable csv-batch-avg
+  Main-Is:          Data/CSV/BatchAverage.hs
+  GHC-Options:      -Wall -rtsopts
+  Hs-source-dirs:   src
+  build-depends:    base ==4.*,
+                    factory ==0.2.*,
+                    split ==0.2.*
+
+Executable csv-condense
+  Main-Is:          Data/CSV/Condense.hs
+  GHC-Options:      -Wall -rtsopts
+  Hs-source-dirs:   src
+  build-depends:    base ==4.*,
+                    split ==0.2.*
