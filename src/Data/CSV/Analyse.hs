@@ -12,6 +12,7 @@
 --
 ------------------------------------------------------------------------
 
+import Control.Monad
 import Data.List
 import Data.List.Split
 import Factory.Math.Statistics (getMean, getStandardDeviation)
@@ -36,7 +37,10 @@ tokenise :: String -> [[String]]
 tokenise = map (splitOn ",") . lines
 
 extractValues :: [[String]] -> ([String], [[Double]])
-extractValues xss = (headings, values)
+extractValues xss =
+  if null xss
+    then error "no data"
+    else (headings, values)
   where (headings:xs) = xss
         values = map (map read) xs
 
@@ -45,17 +49,29 @@ mapColumns f xss = map f . transpose $ xss
 
 main :: IO ()
 main = do
+  -- putStrLn "DEBUG A"
   (h:hs,xss) <- fmap fromCSV getContents
   putStrLn  . intercalate "," $
     h : map ("mean " ++) hs ++ map ("min. " ++) hs ++ map ("max. " ++) hs
     ++ map ("total " ++) hs ++ map ("std. dev. " ++) hs
+  when (null xss) $ error "no data"
+  -- putStrLn $ "DEBUG B " ++ show xss
   let groups = groupBy (same head) xss
+  -- putStrLn $ "DEBUG C " ++ show groups
   let keys = map (nub . map head) groups
+  -- putStrLn $ "DEBUG D " ++ show keys
   let values = map (map tail) groups
+  -- putStrLn $ "DEBUG E " ++ show values
   let means = map (mapColumns getMean) values
+  -- putStrLn $ "DEBUG F " ++ show means
   let minima = map (mapColumns minimum) values
+  -- putStrLn $ "DEBUG G " ++ show minima
   let maxima = map (mapColumns maximum) values
+  -- putStrLn $ "DEBUG H " ++ show maxima
   let totals = map (mapColumns sum) values
+  -- putStrLn $ "DEBUG I " ++ show totals
   let stdDevs = map (mapColumns getStandardDeviation) values
+  -- putStrLn $ "DEBUG J " ++ show stdDevs
   let yss = zipWith (++) keys . zipWith (++) means . zipWith (++) minima . zipWith (++) maxima . zipWith (++) totals $ stdDevs
+  -- putStrLn $ "DEBUG K " ++ show yss
   mapM_ putStrLn . map toCSVLine $ yss
